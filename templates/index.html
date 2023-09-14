@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerta Acadêmico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Barra de Navegação -->
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-logo" href="#">Alerta Acadêmico</a>
+            <ul class="navbar-menu">
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#">Adicionar Aula</a>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#">Listar Aula</a>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#">Registrar Faltas</a>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#">Desfazer Registro</a>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#">Gerar Notificações</a>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#">Adicionar Notificações</a>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#">Remover Notificações</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+        <!-- Adicionar Aula Formulário -->
+        <div id="adicionar-aula" class="form-section">
+        <h2>Adicionar Aula</h2>
+        <form method="POST" action="{{ url_for('adicionar_aula') }}">
+        <label for="nome">Nome da Aula:</label>
+        <input type="text" name="nome" required>
+        <label for="carga_horaria">Carga Horária:</label>
+        <input type="number" name="carga_horaria" required>
+        <label for="aulas_semana">Aulas por Semana:</label>
+        <input type="number" name="aulas_semana" required>
+        <button type="submit">Adicionar Aula</button>
+        </form>
+        </div>
+
+
+        <!-- Lista de Aulas -->
+        <div id="lista-de-aulas" class="list-section">
+            <h2>Lista de Aulas</h2>
+            <ul>
+                {% for aula in aulas %}
+                    <li class="quadro">
+                        <h3>{{ aula.nome }}</h3>
+                        <p>Carga Horária: {{ aula.carga_horaria }}</p>
+                        <p>Aulas por Semana: {{ aula.aulas_semana }}</p>
+                        <p>Faltas: {{ aula.mostrar_faltas() }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+            
+        </div>
+
+        <!-- Registrar Falta Formulário -->
+        <div id="registrar-falta" class="form-section">
+            <h2>Registrar Falta</h2>
+            <form method="POST" action="{{ url_for('registrar_falta') }}">
+                <label for="aula_escolhida">Escolha a Aula:</label>
+                <select name="aula_escolhida" required>
+                    {% for aula in aulas %}
+                        <option value="{{ aula.nome }}">{{ aula.nome }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Registrar Falta</button>
+            </form>
+        </div>
+
+        <!-- Desfazer Registro de Falta -->
+        <div id="desfazer-registro" class="form-section">
+            <h2>Desfazer Registro de Falta</h2>
+            <form method="POST" action="{{ url_for('desfazer_registro') }}">
+                <button type="submit">Desfazer Registro</button>
+            </form>
+        </div>
+
+             <!-- Notificações -->
+            <div class="notification-section">
+            <h2>Notificações</h2>
+            {% for notificacao in notificacoes %}
+            <div class="notification">
+            <h3>Notificação</h3>
+            <p>{{ notificacao }}</p>
+            </div>
+             {% endfor %}
+            </div>
+
+
+        <!-- Adicionar Notificação Formulário -->
+        <div id="adicionar-notificacao" class="form-section">
+            <h2>Adicionar Notificação</h2>
+            <form method="POST" action="{{ url_for('adicionar_notificacao') }}">
+                <label for="notificacao">Notificação:</label>
+                <input type="text" name="notificacao" required>
+                <button type="submit">Adicionar Notificação</button>
+            </form>
+        </div>
+
+        <!-- Remover Notificação -->
+        <div id="remover-notificacao" class="form-section">
+            <h2>Remover Notificação</h2>
+            <form method="POST" action="{{ url_for('remover_notificacao') }}">
+                <button type="submit">Remover Notificação</button>
+            </form>
+        </div>
+
+        <!-- Gerar Notificações -->
+        <div id="gerar-notificacoes" class="form-section">
+            <h2>Gerar Notificações</h2>
+            <form method="POST" action="{{ url_for('gerar_notificacoes') }}">
+                <button type="submit">Gerar Notificações</button>
+            </form>
+        </div>
+    </div>
+
+    
+</body>
+</html>
