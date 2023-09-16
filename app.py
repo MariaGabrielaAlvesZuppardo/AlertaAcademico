@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from merge import *
 
 app = Flask(__name__)
 
@@ -147,6 +148,78 @@ def gerarNotificacoes(fila_de_notificacoes, lista_de_aulas):
             mensagem = f"Alerta! Você ultrapassou o limite de faltas em {aula.nome}. Percentual de faltas: {percentual_faltas:.2f}%"
             fila_de_notificacoes.enfileirar(mensagem)
 
+class MergeSort:
+    @staticmethod
+    def merge_sort(aulas, attr):
+        """Ordena a lista de aulas com base no atributo fornecido usando o algoritmo Merge Sort."""
+        if len(aulas) > 1:
+            mid = len(aulas) // 2
+            left_half = aulas[:mid]
+            right_half = aulas[mid:]
+
+            MergeSort.merge_sort(left_half, attr)
+            MergeSort.merge_sort(right_half, attr)
+
+            i = j = k = 0
+
+            while i < len(left_half) and j < len(right_half):
+                if getattr(left_half[i], attr) < getattr(right_half[j], attr):
+                    aulas[k] = left_half[i]
+                    i += 1
+                else:
+                    aulas[k] = right_half[j]
+                    j += 1
+                k += 1
+
+            while i < len(left_half):
+                aulas[k] = left_half[i]
+                i += 1
+                k += 1
+
+            while j < len(right_half):
+                aulas[k] = right_half[j]
+                j += 1
+                k += 1
+
+        return aulas
+
+    @staticmethod
+    def ordenar_por_nome(aulas):
+        """Ordena aulas por nome."""
+        return MergeSort.merge_sort(aulas, 'nome')
+
+    @staticmethod
+    def ordenar_por_carga_horaria(aulas):
+        """Ordena aulas por carga horária."""
+        return MergeSort.merge_sort(aulas, 'carga_horaria')
+
+    @staticmethod
+    def ordenar_por_percentual_faltas(aulas):
+        """Ordena aulas por percentual de faltas."""
+        return MergeSort.merge_sort(aulas, 'percentual_faltas')
+
+
+# Classe Busca
+class Busca:
+    @staticmethod
+    def buscar_aulas_por_nome(lista_de_aulas, nome):
+        """Busca aulas pelo nome."""
+        return [aula for aula in lista_de_aulas.mostrar_aulas() if aula.nome == nome]
+
+    @staticmethod
+    def buscar_aulas_por_carga_horaria(lista_de_aulas, carga_horaria):
+        """Busca aulas pela carga horária."""
+        return [aula for aula in lista_de_aulas.mostrar_aulas() if aula.carga_horaria == carga_horaria]
+
+    @staticmethod
+    def buscar_aulas_com_faltas_acima_de(lista_de_aulas, percentual):
+        """Busca aulas com percentual de faltas acima de um valor especificado."""
+        return [aula for aula in lista_de_aulas.mostrar_aulas() if (aula.aulas_faltadas / aula.total_aulas) * 100 > percentual]
+
+
+
+
+
 
 
 @app.route('/')
@@ -198,6 +271,47 @@ def remover_notificacao():
 def gerar_notificacoes():
     gerarNotificacoes(fila_de_notificacoes, lista_de_aulas)
     return redirect(url_for('index'))
+
+# Rota para buscar aulas por nome
+@app.route('/buscar_aulas_por_nome', methods=['POST'])
+def buscar_aulas_por_nome():
+    nome = request.form['nome']
+    aulas_encontradas = Busca.buscar_aulas_por_nome(lista_de_aulas, nome)
+    return render_template('index.html', aulas=aulas_encontradas, notificacoes=fila_de_notificacoes.items)
+
+# Rota para buscar aulas por carga horária
+@app.route('/buscar_aulas_por_carga_horaria', methods=['POST'])
+def buscar_aulas_por_carga_horaria():
+    carga_horaria = int(request.form['carga_horaria'])
+    aulas_encontradas = Busca.buscar_aulas_por_carga_horaria(lista_de_aulas, carga_horaria)
+    return render_template('index.html', aulas=aulas_encontradas, notificacoes=fila_de_notificacoes.items)
+
+# Rota para buscar aulas com percentual de faltas acima de um valor
+@app.route('/buscar_aulas_com_faltas_acima_de', methods=['POST'])
+def buscar_aulas_com_faltas_acima_de():
+    percentual = float(request.form['percentual'])
+    aulas_encontradas = Busca.buscar_aulas_com_faltas_acima_de(lista_de_aulas, percentual)
+    return render_template('index.html', aulas=aulas_encontradas, notificacoes=fila_de_notificacoes.items)
+
+# Rota para ordenar aulas por nome
+@app.route('/ordenar_aulas_por_nome', methods=['GET'])
+def ordenar_aulas_por_nome():
+    aulas_ordenadas = MergeSort.ordenar_por_nome(lista_de_aulas.mostrar_aulas())
+    return render_template('index.html', aulas=aulas_ordenadas, notificacoes=fila_de_notificacoes.items)
+
+# Rota para ordenar aulas por carga horária
+@app.route('/ordenar_aulas_por_carga_horaria', methods=['GET'])
+def ordenar_aulas_por_carga_horaria():
+    aulas_ordenadas = MergeSort.ordenar_por_carga_horaria(lista_de_aulas.mostrar_aulas())
+    return render_template('index.html', aulas=aulas_ordenadas, notificacoes=fila_de_notificacoes.items)
+
+# Rota para ordenar aulas por percentual de faltas
+@app.route('/ordenar_aulas_por_percentual_faltas', methods=['GET'])
+def ordenar_aulas_por_percentual_faltas():
+    aulas_ordenadas = MergeSort.ordenar_por_percentual_faltas(lista_de_aulas.mostrar_aulas())
+    return render_template('index.html', aulas=aulas_ordenadas, notificacoes=fila_de_notificacoes.items)
+
+
 
 
 if __name__ == '__main__':

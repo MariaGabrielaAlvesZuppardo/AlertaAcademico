@@ -130,6 +130,38 @@
         </div>
     </div>
 
+
+    <!-- Seção de Busca de Aulas -->
+    <div id="busca-aulas" class="form-section">
+        <h2>Buscar Aulas</h2>
+        <form method="POST" action="{{ url_for('buscar_aulas_por_nome') }}">
+            <label for="nome">Buscar por Nome:</label>
+            <input type="text" name="nome" required>
+            <button type="submit">Buscar</button>
+        </form>
+        <form method="POST" action="{{ url_for('buscar_aulas_por_carga_horaria') }}">
+            <label for="carga_horaria">Buscar por Carga Horária:</label>
+            <input type="number" name="carga_horaria" required>
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+
+
+    <!-- Seção de Ordenação de Aulas -->
+    <div id="ordenacao-aulas" class="form-section">
+        <h2>Ordenação de Aulas</h2>
+        <form method="GET" action="{{ url_for('ordenar_aulas_por_nome') }}">
+            <button type="submit">Ordenar por Nome</button>
+        </form>
+        <form method="GET" action="{{ url_for('ordenar_aulas_por_carga_horaria') }}">
+            <button type="submit">Ordenar por Carga Horária</button>
+        </form>
+        <form method="GET" action="{{ url_for('ordenar_aulas_por_percentual_faltas') }}">
+            <button type="submit">Ordenar por Percentual de Faltas</button>
+        </form>
+    </div>
+
+
     
 </body>
 </html>
