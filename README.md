@@ -4,7 +4,8 @@
 
 - **Disciplina**: IF264 - Métodos Computacionais (2023.1)
 - **Professor**: Paulo Freitas
-- **Estudante**: Romário Jonas de Oliveira Veloso
+- **Estudantes**: Maria Gabriela Alves Zuppardo
+                  Romário Jonas de Oliveira Veloso
 
 ## Sumário
 
